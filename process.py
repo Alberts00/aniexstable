@@ -33,6 +33,7 @@ def getcurrentlywatchingmanga(soup):
     return time.strftime('%Y-%m-%d %H:%M', time.localtime(mangatime)), title
 
 
+
 def getpage(username, type):
     headers = {
     'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:40.0) Gecko/20100101 Firefox/40.0',
@@ -40,6 +41,8 @@ def getpage(username, type):
     url = "http://myanimelist.net/malappinfo.php?u="+username+"&status=all&type="+type
     page = requests.get(url, headers=headers)
     soup = bs(page.text)
+    if "Incapsula_Resource" in page.text:
+        raise RuntimeError("Request blocked")
     return soup
 
 def getdaysspent(soup):
