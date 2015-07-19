@@ -5,6 +5,10 @@ import time
 import numpy as np
 import re
 import pandas as pd
+import os
+
+os.environ['TZ'] = 'Europe/Riga'
+time.tzset()
 
 def loadcsv(filename):
     return np.genfromtxt(filename, delimiter=',', dtype=str)
@@ -50,7 +54,7 @@ def getpage(username, type):
 def getdaysspent(soup):
     return (soup.find("user_days_spent_watching").text)
 
-
+print()
 data = loadcsv("data.csv")
 for i in range(1, len(data)):
     print(data[i][1])
@@ -78,5 +82,7 @@ data = sorted(data, key=lambda x: x[3], reverse=True)
 
 df = pd.DataFrame(data)
 html = df.to_html(index=False, header=False)
+lastupdated = "<p>Last updated: " + time.strftime("%Y-%m-%d %H:%M") + "</p>"
+html += lastupdated
 f = open("out.html", "w")
 f.write(html)
