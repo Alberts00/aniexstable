@@ -56,14 +56,26 @@ def getpage(username, type):
     return soup
 
 def getdaysspent(soup):
-    return (soup.find("user_days_spent_watching").text)
+    return soup.find("user_days_spent_watching").text
+
+def writetofile(data, filename):
+    data = np.array(sorted(data, key=lambda x: x[3], reverse=True))
+    data = data[data[:, 3] != "None"]
+    df = pd.DataFrame(data)
+    html = df.to_html(index=False, header=False)
+    lastupdated = "<p>Last updated: " + time.strftime("%Y-%m-%d %H:%M") + "</p>"
+    html += lastupdated
+    f = open(launchpath + filename, "w")
+    f.write(html)
 
 
 
 data = loadcsv("data.csv")
+
 for i in range(1, len(data)):
     print(data[i][1])
     username = re.search("(animelist|profile)\/(.*)", data[i][1]).group(2)
+    data[i][1] = "http://myanimelist.net/profile/"+username
     soup = getpage(username, "anime")
     lastanimeupdated, lastanime = getcurrentlywatchinganime(soup)
     data[i][2] = lastanime
@@ -80,14 +92,25 @@ for i in range(1, len(data)):
         data[i][6] = "None"
         data[i][7] = "None"
 
+anime = [["" for i in range(5)] for j in range(len(data))]
+manga = [["" for i in range(5)] for j in range(len(data))]
 
-#print(data)
-data = sorted(data, key=lambda x: x[3], reverse=True)
+for i in range(0, len(data)):
+    anime[i][0] = data[i][0]
+    anime[i][1] = data[i][1]
+    anime[i][2] = data[i][2]
+    anime[i][3] = data[i][3]
+    anime[i][4] = data[i][4]
+    manga[i][0] = data[i][0]
+    manga[i][1] = data[i][1]
+    manga[i][2] = data[i][5]
+    manga[i][3] = data[i][6]
+    manga[i][4] = data[i][7]
+
+writetofile(data, "out.html")
+writetofile(anime, "anime.html")
+writetofile(manga, "manga.html")
 
 
-df = pd.DataFrame(data)
-html = df.to_html(index=False, header=False)
-lastupdated = "<p>Last updated: " + time.strftime("%Y-%m-%d %H:%M") + "</p>"
-html += lastupdated
-f = open(launchpath +"out.html", "w")
-f.write(html)
+
+
