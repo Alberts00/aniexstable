@@ -6,12 +6,16 @@ import numpy as np
 import re
 import pandas as pd
 import os
+import sys
 
+
+launchpath = os.path.dirname(sys.argv[0]) + "/"
 os.environ['TZ'] = 'Europe/Riga'
 time.tzset()
 
+
 def loadcsv(filename):
-    return np.genfromtxt(filename, delimiter=',', dtype=str)
+    return np.genfromtxt(launchpath+filename, delimiter=',', dtype=str)
 
 def getcurrentlywatchinganime(soup):
     animetime = 0
@@ -54,7 +58,8 @@ def getpage(username, type):
 def getdaysspent(soup):
     return (soup.find("user_days_spent_watching").text)
 
-print()
+
+
 data = loadcsv("data.csv")
 for i in range(1, len(data)):
     print(data[i][1])
@@ -84,5 +89,5 @@ df = pd.DataFrame(data)
 html = df.to_html(index=False, header=False)
 lastupdated = "<p>Last updated: " + time.strftime("%Y-%m-%d %H:%M") + "</p>"
 html += lastupdated
-f = open("out.html", "w")
+f = open(launchpath +"out.html", "w")
 f.write(html)
