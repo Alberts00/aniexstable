@@ -42,7 +42,9 @@ def getpage(username, type):
     page = requests.get(url, headers=headers)
     soup = bs(page.text)
     if "Incapsula_Resource" in page.text:
-        raise RuntimeError("Request blocked")
+        print(url)
+        time.sleep(5)
+        return getpage(username, type)
     return soup
 
 def getdaysspent(soup):
