@@ -6,13 +6,12 @@ import numpy as np
 import re
 import pandas as pd
 import os
-import sys
+import inspect
 
 
-launchpath = os.path.dirname(sys.argv[0])
-if launchpath:
-    launchpath + "/"
-    
+launchpath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + "/"
+
+
 os.environ['TZ'] = 'Europe/Riga'
 time.tzset()
 
