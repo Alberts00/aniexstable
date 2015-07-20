@@ -9,7 +9,10 @@ import os
 import sys
 
 
-launchpath = os.path.dirname(sys.argv[0]) + "/"
+launchpath = os.path.dirname(sys.argv[0])
+if launchpath:
+    launchpath + "/"
+    
 os.environ['TZ'] = 'Europe/Riga'
 time.tzset()
 
