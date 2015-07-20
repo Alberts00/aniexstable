@@ -65,8 +65,10 @@ def writetofile(data, filename):
     html = df.to_html(index=False, header=False)
     lastupdated = "<p>Last updated: " + time.strftime("%Y-%m-%d %H:%M") + "</p>"
     html += lastupdated
+    soup = bs(html)
+    soup.table['class'] = soup.table('class', []) + ['table']
     f = open(launchpath + filename, "w")
-    f.write(html)
+    f.write(str(soup.prettify()))
 
 
 
