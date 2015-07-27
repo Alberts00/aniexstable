@@ -65,8 +65,10 @@ def writetofile(data, filename):
     data = data[data[:, 3] != "None"]
     df = pd.DataFrame(data)
     html = df.to_html(index=False, header=False)
-    lastupdated = "<p>Last updated: " + time.strftime("%Y-%m-%d %H:%M") + "</p>"
-    html += lastupdated
+    lastupdated = "<p>Last updated: " + time.strftime("%Y-%m-%d %H:%M") + "</p><\\br>"
+    pievienomani = "<p>Ja vēlies, lai tevi pievieno tabulai raksti iekš: https://exs.lv/anime/forum/2metr</p>"
+
+    html += lastupdated + pievienomani
     soup = bs(html)
     soup.table['class'] = soup.table('class', []) + ['table']
     f = open(launchpath + filename, "w")
