@@ -50,7 +50,7 @@ def getpage(username, type):
     }
     url = "http://myanimelist.net/malappinfo.php?u="+username+"&status=all&type="+type
     page = requests.get(url, headers=headers)
-    soup = bs(page.text)
+    soup = bs(page.text, "lxml")
     if "Incapsula_Resource" in page.text:
         print(url)
         time.sleep(5)
@@ -69,7 +69,7 @@ def writetofile(data, filename):
     pievienomani = "<p>Ja vēlies, lai tevi pievieno tabulai raksti iekš: https://exs.lv/anime/forum/2metr</p>"
 
     html += lastupdated + pievienomani
-    soup = bs(html)
+    soup = bs(html, "lxml")
     soup.table['class'] = soup.table('class', []) + ['table']
     f = open(launchpath + filename, "w")
     f.write(str(soup.prettify()))
@@ -79,24 +79,27 @@ def writetofile(data, filename):
 data = loadcsv("data.csv")
 
 for i in range(1, len(data)):
-    print(data[i][1])
-    username = re.search("(animelist|profile)\/(.*)", data[i][1]).group(2)
-    data[i][1] = "http://myanimelist.net/profile/"+username
-    soup = getpage(username, "anime")
-    lastanimeupdated, lastanime = getcurrentlywatchinganime(soup)
-    data[i][2] = lastanime
-    data[i][3] = lastanimeupdated
-    data[i][4] = getdaysspent(soup)
-    soup = getpage(username, "manga")
-    lastmangaupdated, lastmanga  = getcurrentlywatchingmanga(soup)
-    if lastmanga is not "":
-        data[i][5] = lastmanga
-        data[i][6] = lastmangaupdated
-        data[i][7] = getdaysspent(soup)
-    else:
-        data[i][5] = "None"
-        data[i][6] = "None"
-        data[i][7] = "None"
+    try:
+        username = re.search("(animelist|profile)\/(.*)", data[i][1]).group(2)
+        data[i][1] = "http://myanimelist.net/profile/"+username
+        soup = getpage(username, "anime")
+        lastanimeupdated, lastanime = getcurrentlywatchinganime(soup)
+        data[i][2] = lastanime
+        data[i][3] = lastanimeupdated
+        data[i][4] = getdaysspent(soup)
+        soup = getpage(username, "manga")
+        lastmangaupdated, lastmanga  = getcurrentlywatchingmanga(soup)
+        if lastmanga is not "":
+            data[i][5] = lastmanga
+            data[i][6] = lastmangaupdated
+            data[i][7] = getdaysspent(soup)
+        else:
+            data[i][5] = "None"
+            data[i][6] = "None"
+            data[i][7] = "None"
+    except AttributeError:
+        print("error:", data[i][1])
+        continue
 
 anime = [["" for i in range(5)] for j in range(len(data))]
 manga = [["" for i in range(5)] for j in range(len(data))]
